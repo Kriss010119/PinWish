@@ -64,11 +64,13 @@ export function AuthPage() {
     } catch (e) { showErr(e); }
   };
 
+  const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
+
   return (
     <section className="auth">
       <div className="box">
         <div className="logo logo-lg">
-          <img className="logo-img" src="/logo.png" alt="" />
+          <img className="logo-img" src={logoUrl} alt="logo" />
         </div>
         <h1>Загадывай желания</h1>
         <p>Создай свой вишлист или выбери подарок друзьям</p>

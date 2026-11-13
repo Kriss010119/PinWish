@@ -14,11 +14,12 @@ interface Props {
 export function Header({ user, profile, search, onSearch, onCreate, onProfile }: Props) {
   const name = profile?.name || user.displayName || user.email || '?';
   const src = profile?.photo || user.photoURL || avatarDataUrl(name);
+  const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
 
   return (
     <header>
       <div className="logo">
-        <img className="logo-img" src="/logo.png" alt="" />
+        <img className="logo-img" src={logoUrl} alt="logo" />
       </div>
       <input
         className="search"
