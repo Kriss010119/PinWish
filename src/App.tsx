@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
+import { doc, updateDoc } from 'firebase/firestore';
 import { useAuth } from './hooks/useAuth';
 import { useWishes } from './hooks/useWishes';
+import { db } from './firebase';
 import { AuthPage } from './components/AuthPage';
 import { Header } from './components/Header';
 import { Tabs } from './components/Tabs';
@@ -44,10 +46,20 @@ export default function App() {
 
   const opened = openedId ? wishes.find(w => w.id === openedId) : null;
 
+  const handleBook = (id: string) => {
+    updateDoc(doc(db, 'wishes', id), { reservedBy: user.uid })
+      .catch((e: any) => alert('Ошибка: ' + e.message));
+  };
+  const handleUnbook = (id: string) => {
+    updateDoc(doc(db, 'wishes', id), { reservedBy: null })
+      .catch((e: any) => alert('Ошибка: ' + e.message));
+  };
+
   return (
     <>
       <Header
         user={user}
+        profile={profile}
         search={search}
         onSearch={setSearch}
         onCreate={() => setForm({ mode: 'create' })}
@@ -74,7 +86,13 @@ export default function App() {
         )}
 
         {visible.length > 0 ? (
-          <WishGrid wishes={visible} currentUserId={user.uid} onOpen={setOpenedId} />
+          <WishGrid
+            wishes={visible}
+            currentUserId={user.uid}
+            onOpen={setOpenedId}
+            onBook={handleBook}
+            onUnbook={handleUnbook}
+          />
         ) : (
           <div className="empty">
             {filter === 'booked'
@@ -115,10 +133,9 @@ export default function App() {
 
       {showProfile && profile && (
         <ProfileModal
-          email={user.email ?? ''}
+          user={user}
           profile={profile}
           myWishes={myWishes}
-          userId={user.uid}
           onClose={() => setShowProfile(false)}
         />
       )}
